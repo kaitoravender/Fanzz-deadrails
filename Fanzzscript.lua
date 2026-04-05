@@ -631,33 +631,101 @@ realLabel.BackgroundTransparency = 1
 realLabel.Font = Enum.Font.Gotham
 realLabel.TextSize = 10
 realLabel.TextXAlignment = Enum.TextXAlignment.Left
-realLabel.Parent = bodyFrame
+realLabel.Parent = canvas
 
-createModeButton(bodyFrame, 12, "3x", Color3.fromRGB(40,90,40), function()
-stopFakeHitbox()
-startRealHitbox(3)
-end).Position = UDim2.new(0, 12, 0, 170)
+local realRow1 = Instance.new("Frame")
+realRow1.Size = UDim2.new(1, -20, 0, 38)
+realRow1.Position = UDim2.new(0, 10, 0, 188)
+realRow1.BackgroundTransparency = 1
+realRow1.Parent = canvas
 
-createModeButton(bodyFrame, 85, "5x", Color3.fromRGB(40,90,40), function()
-stopFakeHitbox()
-startRealHitbox(5)
-end).Position = UDim2.new(0, 85, 0, 170)
+createModeButton(realRow1, 3, "3x", Color3.fromRGB(40,90,40), function()
+    stopFakeHitbox()
+    startRealHitbox(3)
+end).Position = UDim2.new(0, 0, 0, 3)
 
-createModeButton(bodyFrame, 158, "10x", Color3.fromRGB(40,90,40), function()
-stopFakeHitbox()
-startRealHitbox(10)
-end).Position = UDim2.new(0, 158, 0, 170)
+createModeButton(realRow1, 73, "5x", Color3.fromRGB(40,90,40), function()
+    stopFakeHitbox()
+    startRealHitbox(5)
+end).Position = UDim2.new(0, 73, 0, 3)
 
-createModeButton(bodyFrame, 85, "20x", Color3.fromRGB(40,90,40), function()
-stopFakeHitbox()
-startRealHitbox(20)
-end).Position = UDim2.new(0, 85, 0, 210)
+createModeButton(realRow1, 146, "10x", Color3.fromRGB(40,90,40), function()
+    stopFakeHitbox()
+    startRealHitbox(10)
+end).Position = UDim2.new(0, 146, 0, 3)
 
-createModeButton(bodyFrame, 158, "OFF", Color3.fromRGB(120,40,40), function()
-stopRealHitbox()
-end).Position = UDim2.new(0, 158, 0, 210)
+local realRow2 = Instance.new("Frame")
+realRow2.Size = UDim2.new(1, -20, 0, 38)
+realRow2.Position = UDim2.new(0, 10, 0, 230)
+realRow2.BackgroundTransparency = 1
+realRow2.Parent = canvas
 
--- ========== MINIMIZE TO LOGO (MOBILE FRIENDLY) ==========
+createModeButton(realRow2, 73, "20x", Color3.fromRGB(40,90,40), function()
+    stopFakeHitbox()
+    startRealHitbox(20)
+end).Position = UDim2.new(0, 73, 0, 3)
+
+createModeButton(realRow2, 146, "OFF", Color3.fromRGB(120,40,40), function()
+    stopRealHitbox()
+end).Position = UDim2.new(0, 146, 0, 3)
+
+-- ========== KILL AURA TOGGLE ==========
+local killContainer = Instance.new("Frame")
+killContainer.Size = UDim2.new(1, -20, 0, 40)
+killContainer.Position = UDim2.new(0, 10, 0, 275)
+killContainer.BackgroundTransparency = 1
+killContainer.Parent = canvas
+
+local killLabel = Instance.new("TextLabel")
+killLabel.Size = UDim2.new(0, 160, 0, 22)
+killLabel.Position = UDim2.new(0, 0, 0, 9)
+killLabel.Text = "⚔️ KILL AURA (melee)"
+killLabel.TextColor3 = Color3.fromRGB(220, 220, 220)
+killLabel.BackgroundTransparency = 1
+killLabel.Font = Enum.Font.Gotham
+killLabel.TextSize = 11
+killLabel.TextXAlignment = Enum.TextXAlignment.Left
+killLabel.Parent = killContainer
+
+local killToggle = Instance.new("TextButton")
+killToggle.Size = UDim2.new(0, 65, 0, 30)
+killToggle.Position = UDim2.new(1, -75, 0, 5)
+killToggle.Text = "OFF"
+killToggle.TextColor3 = Color3.fromRGB(255, 100, 100)
+killToggle.BackgroundColor3 = Color3.fromRGB(60, 60, 70)
+killToggle.Font = Enum.Font.GothamBold
+killToggle.TextSize = 12
+killToggle.BorderSizePixel = 0
+killToggle.Parent = killContainer
+local killCorner = Instance.new("UICorner")
+killCorner.CornerRadius = UDim.new(0, 14)
+killCorner.Parent = killToggle
+
+local killState = false
+killToggle.MouseButton1Click:Connect(function()
+    killState = not killState
+    if killState then
+        killToggle.Text = "ON"
+        killToggle.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
+        killToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+        startKillAura()
+    else
+        killToggle.Text = "OFF"
+        killToggle.BackgroundColor3 = Color3.fromRGB(60, 60, 70)
+        killToggle.TextColor3 = Color3.fromRGB(255, 100, 100)
+        stopKillAura()
+    end
+end)
+
+-- Update CanvasSize berdasarkan posisi terakhir (bondLabel ada di Y 320)
+local function updateCanvasSize()
+    local maxY = 320 + bondLabel.Size.Y.Offset + 30
+    canvas.Size = UDim2.new(1, 0, 0, maxY)
+    scrollFrame.CanvasSize = UDim2.new(0, 0, 0, maxY + 10)
+end
+task.defer(updateCanvasSize)
+
+-- ========== MINIMIZE TO LOGO ==========
 local logoFrame = Instance.new("Frame")
 logoFrame.Size = UDim2.new(0, 45, 0, 45)
 logoFrame.Position = UDim2.new(0.02, 0, 0.85, 0)
@@ -680,38 +748,37 @@ logoBtn.Font = Enum.Font.GothamBold
 logoBtn.TextSize = 16
 logoBtn.Parent = logoFrame
 
--- Klik kiri pada tombol minimize (─) akan menyembunyikan GUI dan menampilkan logo (mobile friendly)
 minBtn.MouseButton1Click:Connect(function()
-mainFrame.Visible = false
-logoFrame.Visible = true
+    mainFrame.Visible = false
+    logoFrame.Visible = true
 end)
 
--- Klik pada logo akan mengembalikan GUI
 logoBtn.MouseButton1Click:Connect(function()
-logoFrame.Visible = false
-mainFrame.Visible = true
+    logoFrame.Visible = false
+    mainFrame.Visible = true
 end)
 
 -- ========== CLOSE ==========
 closeBtn.MouseButton1Click:Connect(function()
-stopFakeHitbox()
-stopRealHitbox()
-stopBonds()
-screenGui:Destroy()
+    stopFakeHitbox()
+    stopRealHitbox()
+    stopBonds()
+    stopKillAura()
+    screenGui:Destroy()
 end)
 
 -- ========== BOND COUNTER UPDATE ==========
 task.spawn(function()
-while screenGui and screenGui.Parent do
-task.wait(2)
-local ls = player:FindFirstChild("leaderstats")
-if ls then
-for _, v in ipairs(ls:GetChildren()) do
-if v.Name:lower():find("bond") then
-bondLabel.Text = string.format("Bonds: %d", v.Value)
-break
-end
-end
-end
-end
+    while screenGui and screenGui.Parent do
+        task.wait(2)
+        local ls = player:FindFirstChild("leaderstats")
+        if ls then
+            for _, v in ipairs(ls:GetChildren()) do
+                if v.Name:lower():find("bond") then
+                    bondLabel.Text = string.format("Bonds: %d", v.Value)
+                    break
+                end
+            end
+        end
+    end
 end)
