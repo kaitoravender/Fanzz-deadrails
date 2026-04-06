@@ -552,7 +552,7 @@ local function startKillAura()
                 fakeTime = tick()  -- update terus biar real time
                 swingRemote:FireServer(tool, fakeTime, root.CFrame.LookVector)
             end
-            task.wait(0.07)
+            task.wait(0.01)
         end
     end)
 end
